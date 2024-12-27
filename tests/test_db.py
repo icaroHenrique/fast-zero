@@ -17,12 +17,11 @@ def test_create_user(session, mock_db_time):
         select(User).where(User.email == 'icaro@mail.com')
     )
 
-    print(result.created_at)
-
     assert asdict(result) == {
         'id': 1,
         'username': 'icaro',
         'password': 'secreto',
         'email': 'icaro@mail.com',
         'created_at': time,
+        'updated_at': time
     }
