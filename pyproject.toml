@@ -11,6 +11,8 @@ fastapi = {extras = ["standard"], version = "^0.112.2"}
 sqlalchemy = "^2.0.35"
 pydantic-settings = "^2.5.2"
 alembic = "^1.13.3"
+pyjwt = "^2.10.1"
+pwdlib = {extras = ["argon2"], version = "^0.2.1"}
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.13.0"
