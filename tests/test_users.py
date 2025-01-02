@@ -10,13 +10,13 @@ def test_negative_get_user(client):
     assert response.json() == {'detail': 'User not found'}
 
 
-def test_negative_update_user_not_found(client, token):
+def test_negative_update_user_not_found(client, user, token):
     response = client.put(
-        '/users/2',
+        f'/users/{user.id + 1}',
         headers={'Authorization': f'Bearer {token}'},
         json={
-            'username': 'icarohenrique',
-            'email': 'icaro@example.com',
+            'username': 'username',
+            'email': 'email@example.com',
             'password': 'password',
         },
     )
@@ -25,22 +25,13 @@ def test_negative_update_user_not_found(client, token):
     assert response.json() == {'detail': 'User not found'}
 
 
-def test_negative_update_forbidden(client, token):
-    client.post(
-        '/users/',
-        json={
-            'username': 'icaro',
-            'email': 'icaro@example.com',
-            'password': 'password',
-        },
-    )
-
+def test_negative_update_forbidden(client, other_user, token):
     response = client.put(
-        '/users/2',
+        f'/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
-            'username': 'icarohenrique',
-            'email': 'icaro@example.com',
+            'username': 'username',
+            'email': 'email@example.com',
             'password': 'password',
         },
     )
@@ -49,9 +40,9 @@ def test_negative_update_forbidden(client, token):
     assert response.json() == {'detail': 'Not enough permissions'}
 
 
-def test_negative_delete_user_not_found(client, token):
+def test_negative_delete_user_not_found(client, user, token):
     response = client.delete(
-        '/users/2',
+        f'/users/{user.id + 1}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -59,18 +50,9 @@ def test_negative_delete_user_not_found(client, token):
     assert response.json() == {'detail': 'User not found'}
 
 
-def test_negative_delete_forbidden(client, token):
-    client.post(
-        '/users/',
-        json={
-            'username': 'icaro',
-            'email': 'icaro@example.com',
-            'password': 'password',
-        },
-    )
-
+def test_negative_delete_forbidden(client, other_user, token):
     response = client.delete(
-        '/users/2',
+        f'/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -82,16 +64,16 @@ def test_create_user(client):
     response = client.post(
         '/users/',
         json={
-            'username': 'icaro',
-            'email': 'icaro@example.com',
+            'username': 'username',
+            'email': 'email@example.com',
             'password': 'password',
         },
     )
 
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
-        'username': 'icaro',
-        'email': 'icaro@example.com',
+        'username': 'username',
+        'email': 'email@example.com',
         'id': 1,
     }
 
@@ -100,8 +82,8 @@ def test_negative_create_user_with_already_username(client, user):
     response = client.post(
         '/users/',
         json={
-            'username': 'Teste',
-            'email': 'icaro@example.com',
+            'username': user.username,
+            'email': 'email@example.com',
             'password': 'password',
         },
     )
@@ -114,8 +96,8 @@ def test_negative_create_user_with_already_email(client, user):
     response = client.post(
         '/users/',
         json={
-            'username': 'icaro',
-            'email': 'teste@teste.com',
+            'username': 'username',
+            'email': user.email,
             'password': 'password',
         },
     )
